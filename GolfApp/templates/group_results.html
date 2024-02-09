@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>グループ分け結果</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>グループ分け結果</h1>
+    {% for group in groups %}
+        <h2>グループ {{ forloop.counter }}</h2>
+        <ul>
+            {% for participant in group %}
+                <li>{{ participant.name }}</li>
+            {% endfor %}
+        </ul>
+    {% endfor %}
+    <a href="{% url 'index' %}">戻る</a>
+</body>
+</html>

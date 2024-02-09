@@ -1,0 +1,35 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>参加者編集</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>参加者編集</h1>
+    <form method="post">
+        {% csrf_token %}        
+        <!-- フォームフィールドを個別にレンダリング -->
+        <p>
+            <label for="id_name">名前:</label>
+            {{ form.name }}
+        </p>
+        <p>
+            <label for="id_score">スコア:</label>
+            {{ form.average_score }}
+        </p>
+        <p>
+            <label for="id_gender">性別:</label>
+            {{ form.gender }}
+        </p>
+        <p>
+            <label for="id_is_etiquette_leader">エチケットリーダー:</label>
+            {{ form.is_etiquette_leader }}
+        </p>
+
+        <button type="submit">更新</button>
+    </form>
+    <a href="{% url 'index' %}">戻る</a>
+</body>
+</html>

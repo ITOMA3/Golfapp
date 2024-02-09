@@ -1,0 +1,15 @@
+# Pythonのバイトコード
+__pycache__/
+*.pyc
+
+# Django
+db.sqlite3
+*.log
+*.pot
+*.pyc
+__pycache__/
+media
+
+# ローカル設定ファイル
+.local/
+.env

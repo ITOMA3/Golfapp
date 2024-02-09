@@ -1,0 +1,90 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>ゴルフコンペ参加者一覧</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <h1>ゴルフコンペ参加者一覧</h1>
+
+    <!-- 全選択・選択解除ボタンの追加 -->
+    <div>
+        <button type="button" id="selectAll">すべて選択</button>
+        <button type="button" id="deselectAll">選択を解除</button>
+    </div>
+    <div id="selectedCount">選択された参加者の人数: 0</div>
+    <form action="{% url 'index' %}" method="post">
+        {% csrf_token %}
+        <table class="participant-list">
+            <thead>
+                <tr>
+                    <th></th> <!-- チェックボックス用のヘッダー -->
+                    <th>名前</th>
+                    <th>性別</th>
+                    <th>平均スコア</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for participant in participants %}
+                <tr>
+                    <td><input type="checkbox" name="participants[]" value="{{ participant.id }}"></td>
+                    <td>{{ participant.name }}{% if participant.is_etiquette_leader %}⛳️{% endif %}</td>
+                    <td>{% if participant.gender == 'M' %}男性{% elif participant.gender == 'F' %}女性{% else %}その他{% endif %}</td>
+                    <td>{{ participant.average_score }}</td>
+                    <td>
+                        <!-- 編集ページへのリンクを含む「編集」ボタン -->
+                        <a href="{% url 'participant_edit' participant.id %}" class="btn btn-primary">編集</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button type="submit" class="btn btn-primary">グループ分け実行</button>
+        <div>
+            <a href="{% url 'participant_register' %}" class="btn btn-primary">参加者登録</a>
+            <a href="{% url 'show_delete_participants_form' %}" class="btn btn-primary">参加者の削除</a>
+        </div>
+    </form>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+        <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const updateSelectedCount = () => {
+                const selectedCount = document.querySelectorAll('input[type="checkbox"][name="participants[]"]:checked').length;
+                document.getElementById('selectedCount').textContent = `選択された参加者の人数: ${selectedCount}`;
+            };
+        
+            // すべて選択・選択解除ボタンのイベントリスナーに人数更新機能を追加
+            document.getElementById('selectAll').addEventListener('click', function() {
+                document.querySelectorAll('input[type="checkbox"][name="participants[]"]').forEach(function(checkbox) {
+                    checkbox.checked = true;
+                });
+                updateSelectedCount(); // 人数を更新
+            });
+        
+            document.getElementById('deselectAll').addEventListener('click', function() {
+                document.querySelectorAll('input[type="checkbox"][name="participants[]"]').forEach(function(checkbox) {
+                    checkbox.checked = false;
+                });
+                updateSelectedCount(); // 人数を更新
+            });
+        
+            // 各チェックボックスの状態変更時に人数を更新
+            document.querySelectorAll('input[type="checkbox"][name="participants[]"]').forEach(function(checkbox) {
+                checkbox.addEventListener('change', updateSelectedCount);
+            });
+        
+            // 初期状態での人数更新
+            updateSelectedCount();
+        });
+        </script>
+</body>
+</html>
